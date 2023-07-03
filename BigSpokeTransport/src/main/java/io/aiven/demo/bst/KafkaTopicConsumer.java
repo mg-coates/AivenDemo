@@ -20,28 +20,34 @@ import org.slf4j.LoggerFactory;
  *
  * @author mcoates
  */
-public class KafkaAlertConsumer extends KafkaClient {
+public class KafkaTopicConsumer extends KafkaClient {
 
     private static final String TOPIC = "alertTopic";
-    private static final Logger logger = LoggerFactory.getLogger(KafkaAlertConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaTopicConsumer.class);
+    private String topicName;
 
     public static void main(String[] args) {
-        KafkaAlertConsumer consumer = new KafkaAlertConsumer();
+        if (args.length!=1) {
+            logger.error("You must include a single argument for the Kafka topic to follow");
+            return;
+        }
+        KafkaTopicConsumer consumer = new KafkaTopicConsumer(args[0]);
         consumer.run();
     }
 
+    public KafkaTopicConsumer(String topicName) {
+        this.topicName = topicName;
+    }
+
     public void run() {
-        String topicName = appProps.getProperty(TOPIC);
         Consumer<String, String> consumer = new KafkaConsumer<>(kafkaProps);
         consumer.subscribe(Arrays.asList(topicName));
-         while(true){
-            ConsumerRecords<String, String> records =
-                    consumer.poll(Duration.ofMillis(100));
+        while (true) {
+            ConsumerRecords<String, String> records
+                    = consumer.poll(Duration.ofMillis(100));
 
-            for (ConsumerRecord<String, String> record : records){
+            for (ConsumerRecord<String, String> record : records) {
                 logger.info("Truck Temperature outside Range: " + record.value());
-                //logger.info("Key: " + record.key() + ", Value: " + record.value());
-                //logger.info("Partition: " + record.partition() + ", Offset:" + record.offset());
             }
         }
     }
