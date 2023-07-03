@@ -7,14 +7,16 @@ Data is then published to either an OnTarget, or Alerts topic depending on wheth
 
 Configuration for Kafka, Flink, and metrics via InfluxDB & Grafana have been performed via the Aiven UI, and as such are not provided here.
 
-3 main classes exist in the project:
+2 main classes exist in the project:
 KafkaMessageProducer
 produces demo messages to a kafka topic as configured in app.properties
+mvn compile exec:java -Dexec.mainClass="io.aiven.demo.bst.KafkaMessageProducer"
 
-KafkaAlertConsumer
-subscribes to the alerts topic 
+KafkaTopicConsumer
+To subscribe to the alerts topic 
+mvn compile exec:java -Dexec.mainClass="io.aiven.demo.bst.KafkaTopicConsumer" -Dexec.args="trucks.refrigerated.alert"
 
-KafkaOnTargetConsumer
-subscribes to the OnTarget topic
+& to subscribe to the OnTarget topic
+mvn compile exec:java -Dexec.mainClass="io.aiven.demo.bst.KafkaTopicConsumer" -Dexec.args="trucks.refrigerated.ontarget"
 
 Kafka connection details are held in kafka.properties
